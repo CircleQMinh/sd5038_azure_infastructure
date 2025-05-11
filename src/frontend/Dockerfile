@@ -1,40 +1,16 @@
-# Create image based on the official Node image from dockerhub
-FROM node:lts-buster AS development
-ENV DANGEROUSLY_DISABLE_HOST_CHECK=true
-# Create app directory
-WORKDIR /usr/src/app
+# Step 1: Build the React app
+FROM node:lts-buster AS builder
+WORKDIR /app
 
-# Copy dependency definitions
-COPY package.json /usr/src/app
-COPY package-lock.json /usr/src/app
-
-# Install dependecies
-#RUN npm set progress=false \
-#    && npm config set depth 0 \
-#    && npm i install
+COPY package*.json ./
 RUN npm ci
 
-# Get all the code needed to run the app
-COPY . /usr/src/app
+COPY . .
+RUN npm run build
 
-# Expose the port the app runs in
-EXPOSE 3000
+# Step 2: Serve with NGINX
+FROM nginx:alpine
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# Serve the app
-CMD ["npm", "start"]
-
-#FROM development as dev-envs
-#ENV DANGEROUSLY_DISABLE_HOST_CHECK=true
-#
-#RUN apt-get update
-#RUN apt-get install -y --no-install-recommends git
-#
-#
-#RUN useradd -s /bin/bash -m vscode
-#RUN groupadd docker
-#RUN usermod -aG docker vscode
-#
-#
-## install Docker tools (cli, buildx, compose)
-#COPY --from=gloursdocker/docker / /
-#CMD [ "npm", "start" ]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

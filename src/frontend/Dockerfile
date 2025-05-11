@@ -8,9 +8,13 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Step 2: Serve with NGINX
+# Step 2: Serve with NGINX on port 3000
 FROM nginx:alpine
+
+# Replace default NGINX config
+COPY nginx.conf /etc/nginx/nginx.conf
+
 COPY --from=builder /app/build /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]

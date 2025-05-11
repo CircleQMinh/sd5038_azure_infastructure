@@ -6,9 +6,9 @@ spec:
   selector:
     app: frontend
   ports:
-    - port: 3000
+    - port: 80
       protocol: TCP
-      targetPort: 3000
+      targetPort: 80
   type: ClusterIP
 
 ---
@@ -31,5 +31,5 @@ spec:
           image: practicaldevops.azurecr.io/backend-minhvu:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 3000
+            - containerPort: 80
 

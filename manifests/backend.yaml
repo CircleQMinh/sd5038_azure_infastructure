@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: backend-minhvu:latest
+          image: practicaldevops.azurecr.io/backend-minhvu:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
